@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Legacy One</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#f5f3ef; --card:#fff; --ink:#171717; --muted:#77736d;
+  --line:#e8e4dd; --accent:#111; --soft:#eeeae2; --danger:#8d3434;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,Arial,sans-serif}
+.app{max-width:1180px;margin:auto;padding:28px 20px 50px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:14px;background:#171717;color:white;display:grid;place-items:center;font-weight:800;font-size:15px}
+h1{font-size:24px;line-height:1;margin:0;font-weight:800;letter-spacing:-.7px}
+.tag{font-size:11px;color:var(--muted);margin-top:5px}
+button{border:0;border-radius:12px;padding:12px 16px;font:700 13px Manrope;cursor:pointer}
+.primary{background:#171717;color:#fff}
+.secondary{background:#fff;border:1px solid var(--line)}
+.mission{background:#171717;color:#fff;border-radius:24px;padding:24px;margin-bottom:22px}
+.mission small{opacity:.6;font-size:11px;text-transform:uppercase;letter-spacing:1.2px}
+.mission h2{margin:9px 0 0;font-size:25px;letter-spacing:-.7px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
+.card h3{margin:0 0 15px;font-size:14px}
+.item{padding:13px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0;padding-top:0}
+.item-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.title{font-size:13px;font-weight:800}
+.sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.badge{font-size:9px;font-weight:800;padding:5px 8px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.badge.high{background:#f1dede;color:var(--danger)}
+.actions{display:flex;gap:7px;margin-top:9px}
+.actions button{padding:7px 9px;font-size:10px}
+.empty{font-size:12px;color:var(--muted)}
+.progress{height:6px;background:var(--soft);border-radius:99px;overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;background:#171717;width:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--soft);border-radius:14px;padding:12px}
+.stat b{font-size:20px}.stat span{display:block;font-size:9px;color:var(--muted);margin-top:3px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:10}
+.modal.open{display:flex}
+.sheet{background:#fff;width:min(620px,100%);border-radius:24px;padding:22px;max-height:90vh;overflow:auto}
+.sheet h2{margin:0 0 18px;font-size:20px}
+.form{display:grid;gap:11px}
+label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font:500 13px Manrope;background:#fff}
+textarea{min-height:80px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+@media(max-width:760px){
+ .app{padding:20px 14px 35px}.span4,.span6,.span8,.span12{grid-column:span 12}
+ header{align-items:flex-start}.mission h2{font-size:21px}
+ .row{grid-template-columns:1fr}.grid{gap:12px}.card{border-radius:18px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">L1</div>
+    <div><h1>LEGACY ONE</h1><div class="tag" id="dateLine">Your day. Your decisions. Your move.</div></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+  <button class="secondary" onclick="focusMode()">🎯 Focus</button>
+  <button class="primary" onclick="openModal()">+ Nouvelle action</button>
+</div>
+</header>
+
+<section class="mission">
+  <small>Mission principale</small>
+  <h2 id="missionText">Faire avancer ce qui compte.</h2>
+</section>
+
+<section class="card" style="margin-bottom:16px;background:#171717;color:#fff;border:0">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div>
+      <div style="font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:1.1px">🤖 Legacy Intelligence</div>
+      <div id="aiHeadline" style="font-size:17px;font-weight:800;margin-top:7px">Analyse de ta journée…</div>
+      <div id="aiText" style="font-size:11px;opacity:.72;margin-top:5px;line-height:1.5"></div>
+    </div>
+    <div style="font-size:28px">✨</div>
+  </div>
+</section>
+
+<section class="card" style="margin-bottom:16px">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div>
+      <h3 style="margin-bottom:5px">☀️ Ton briefing</h3>
+      <div id="briefing" class="sub">Legacy prépare ton point du jour.</div>
+    </div>
+    <div class="badge">Aujourd’hui</div>
+  </div>
+</section>
+
+<div class="grid">
+  <section class="card span4"><h3>🎯 Mes 3 priorités</h3><div id="priorities"></div></section>
+  <section class="card span4"><h3>⚡ Ce qui ne peut pas attendre</h3><div id="urgent"></div></section>
+  <section class="card span4"><h3>🧠 Décisions Legacy</h3><div id="decisions"></div></section>
+
+  <section class="card span6"><h3>📌 Aujourd’hui</h3><div id="today"></div></section>
+  <section class="card span6"><h3>💰 Argent à suivre</h3><div id="money"></div></section>
+
+  <section class="card span8"><h3>📁 Projets — Objectif / Prochaine action</h3><div id="projects"></div></section>
+  <section class="card span4"><h3>📊 Vue rapide</h3><div class="stats" id="stats"></div></section>
+
+  <section class="card span12"><h3>🌙 Fin de journée</h3><div id="evening"></div></section>
+<div style="text-align:center;color:#aaa;font-size:10px;margin-top:24px">Legacy One · moins de gestion, plus d’action.</div>
+</div>
+
+<div class="modal" id="focusModal">
+ <div class="sheet">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+   <div>
+    <div style="font-size:10px;font-weight:800;color:#77736d;text-transform:uppercase;letter-spacing:1px">🎯 Mode Focus</div>
+    <h2 id="focusTitle" style="margin-top:7px">Une seule chose maintenant.</h2>
+   </div>
+   <button class="secondary" onclick="closeFocus()">×</button>
+  </div>
+  <div id="focusContent" style="margin-top:18px"></div>
+ </div>
+</div>
+
+<div class="modal" id="modal">
+ <div class="sheet">
+  <h2>Nouvelle action</h2>
+  <form class="form" onsubmit="saveAction(event)">
+   <div><label>Projet</label><input id="project" required placeholder="Ex. Equatoria"></div>
+   <div><label>Objectif</label><input id="objective" required placeholder="Ce que je veux obtenir"></div>
+   <div><label>Prochaine action</label><input id="action" required placeholder="La prochaine chose concrète à faire"></div>
+   <div class="row">
+    <div><label>Priorité</label><select id="priority"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></div>
+    <div><label>Statut</label><select id="status"><option>À faire</option><option>En cours</option><option>En attente</option><option>Bloqué</option><option>Terminé</option></select></div>
+   </div>
+   <div class="row">
+    <div><label>Échéance</label><input id="due" type="date"></div>
+    <div><label>Montant</label><input id="amount" type="number" min="0" placeholder="FCFA"></div>
+   </div>
+   <div><label>Notes</label><textarea id="notes" placeholder="Personne à contacter, blocage, contexte..."></textarea></div>
+   <div class="modal-actions"><button type="button" class="secondary" onclick="closeModal()">Annuler</button><button class="primary">Ajouter</button></div>
+  </form>
+ </div>
+</div>
+
+<script>
+const seed=[
+ {id:1,project:"Equatoria",objective:"Faire avancer Equatoria",action:"Définir la prochaine étape du dossier Blue Fund",priority:"Haute",status:"À faire",due:"",amount:0,notes:""},
+ {id:2,project:"Déplacement",objective:"Aller à BZV",action:"Confirmer la date du déplacement",priority:"Haute",status:"À faire",due:"",amount:0,notes:""},
+ {id:3,project:"Hilton Les Tours Jumelles",objective:"Payer la dette",action:"Confirmer le montant dû",priority:"Haute",status:"À faire",due:"",amount:0,notes:""},
+ {id:4,project:"Mwandza",objective:"Récupérer les affaires",action:"Contacter Mwandza et fixer l’heure de récupération",priority:"Moyenne",status:"À faire",due:"",amount:0,notes:""}
+];
+let items=JSON.parse(localStorage.getItem("legacyOne"))||seed;
+function save(){localStorage.setItem("legacyOne",JSON.stringify(items))}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function active(){return items.filter(x=>x.status!=="Terminé")}
+function renderItem(x,showDelete=true){
+ return `<div class="item"><div class="item-main"><div><div class="title">${esc(x.action)}</div><div class="sub">${esc(x.project)} · ${esc(x.objective)}</div></div><span class="badge ${x.priority==="Haute"?"high":""}">${esc(x.priority)}</span></div>
+ <div class="actions"><button class="secondary" onclick="complete(${x.id})">✓ Fait</button>${showDelete?`<button class="secondary" onclick="removeItem(${x.id})">Supprimer</button>`:""}</div></div>`;
+}
+function intelligence(){
+ const a=active();
+ const high=a.filter(x=>x.priority==="Haute");
+ const blocked=a.filter(x=>x.status==="Bloqué");
+ const waiting=a.filter(x=>x.status==="En attente");
+ const money=a.filter(x=>Number(x.amount)>0);
+ const today=new Date(); today.setHours(0,0,0,0);
+ const dueSoon=a.filter(x=>{
+   if(!x.due) return false;
+   const d=new Date(x.due+"T00:00:00");
+   const diff=Math.round((d-today)/86400000);
+   return diff<=2;
+ });
+ let headline="Tout est sous contrôle.";
+ let text="Garde ton attention sur les prochaines actions concrètes.";
+
+ if(blocked.length){
+   headline="🧠 Décision nécessaire";
+   text=`${blocked[0].project} est bloqué. ${blocked.length>1?"Tu as "+blocked.length+" dossiers bloqués.":"Une décision de ta part peut le débloquer."}`;
+ } else if(dueSoon.length){
+   headline="⏰ Échéance proche";
+   text=`${dueSoon[0].project} arrive à échéance bientôt. Regarde cette action avant de passer au reste.`;
+ } else if(high.length>3){
+   headline="🎯 Trop de priorités";
+   text=`Tu as ${high.length} priorités hautes. Legacy One te suggère de n’en garder que 3 aujourd’hui.`;
+ } else if(waiting.length){
+   headline="📌 Dossiers en attente";
+   text=`${waiting.length} dossier(s) attendent une action ou une réponse. Pense à relancer ce qui est important.`;
+ } else if(money.length){
+   headline="💰 Argent à suivre";
+   text=`${money.length} élément(s) financier(s) sont encore ouverts.`;
+ } else if(a.length){
+   headline="⚡ Passe à l’action";
+   text=`Ta prochaine action est : « ${a[0].action} ».`;
+ }
+ document.getElementById("aiHeadline").textContent=headline;
+ document.getElementById("aiText").textContent=text;
+
+ const hour=new Date().getHours();
+ const greeting=hour<12?"Bonjour":hour<18?"Bon après-midi":"Bonsoir";
+ const top=(high.length?high:a).slice(0,3);
+ const briefing=top.length
+   ? `${greeting}. Aujourd’hui, concentre-toi sur ${top.length} priorité${top.length>1?"s":""} : ${top.map(x=>x.project).join(", ")}. ${blocked.length?"Point de vigilance : un dossier est bloqué.":dueSoon.length?"Une échéance approche.":"Aucun signal critique détecté."}`
+   : `${greeting}. Ta journée est légère. Tu peux utiliser Legacy One pour ajouter la prochaine action importante.`;
+ document.getElementById("briefing").textContent=briefing;
+}
+
+function updateDate(){
+ const d=new Date();
+ const formatted=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+ document.getElementById("dateLine").textContent=formatted.charAt(0).toUpperCase()+formatted.slice(1)+" · Your day. Your decisions. Your move.";
+}
+function render(){
+ const a=active(), high=a.filter(x=>x.priority==="Haute"), urgent=a.filter(x=>x.priority==="Haute"||x.status==="Bloqué");
+ document.getElementById("priorities").innerHTML=(high.length?high.slice(0,3):a.slice(0,3)).map(x=>renderItem(x)).join("")||'<div class="empty">Aucune priorité.</div>';
+ document.getElementById("urgent").innerHTML=urgent.slice(0,4).map(x=>renderItem(x)).join("")||'<div class="empty">Rien d’urgent.</div>';
+ document.getElementById("today").innerHTML=a.slice(0,8).map(x=>renderItem(x)).join("")||'<div class="empty">Journée vide.</div>';
+ document.getElementById("decisions").innerHTML=a.filter(x=>x.status==="En attente"||x.status==="Bloqué").slice(0,4).map(x=>renderItem(x,false)).join("")||'<div class="empty">Aucune décision en attente.</div>';
+ const money=a.filter(x=>Number(x.amount)>0);
+ document.getElementById("money").innerHTML=money.map(x=>`<div class="item"><div class="title">${Number(x.amount).toLocaleString("fr-FR")} FCFA</div><div class="sub">${esc(x.project)} — ${esc(x.objective)}</div></div>`).join("")||'<div class="empty">Aucun montant à suivre.</div>';
+ const groups={};a.forEach(x=>(groups[x.project]??=[]).push(x));
+ document.getElementById("projects").innerHTML=Object.entries(groups).map(([p,arr])=>`<div class="item"><div class="title">${esc(p)}</div><div class="sub">${esc(arr[0].objective)}</div><div class="progress"><i style="width:${Math.round(arr.filter(x=>x.status==="Terminé").length/arr.length*100)}%"></i></div><div class="sub">Prochaine action : ${esc(arr[0].action)}</div></div>`).join("")||'<div class="empty">Aucun projet actif.</div>';
+ document.getElementById("stats").innerHTML=`<div class="stat"><b>${active().length}</b><span>à faire</span></div><div class="stat"><b>${items.filter(x=>x.status==="En cours").length}</b><span>en cours</span></div><div class="stat"><b>${items.filter(x=>x.status==="Terminé").length}</b><span>terminées</span></div>`;
+ document.getElementById("evening").innerHTML=`<div class="sub">Fin de journée : ${items.filter(x=>x.status==="Terminé").length} action(s) terminée(s) · ${active().length} restante(s).</div>`;
+}
+function complete(id){const x=items.find(x=>x.id===id);if(x){x.status="Terminé";save();render()}}
+function removeItem(id){items=items.filter(x=>x.id!==id);save();render()}
+function focusMode(){
+ const a=active();
+ if(!a.length){
+   document.getElementById("focusTitle").textContent="Tout est fait. 🎉";
+   document.getElementById("focusContent").innerHTML='<div class="sub">Aucune action active. Profite de ce moment ou ajoute une nouvelle action.</div>';
+ }else{
+   const x=[...a].sort((u,v)=>(u.priority==="Haute"?0:u.priority==="Moyenne"?1:2)-(v.priority==="Haute"?0:v.priority==="Moyenne"?1:2))[0];
+   document.getElementById("focusTitle").textContent="Voici ce qui mérite ton attention.";
+   document.getElementById("focusContent").innerHTML=
+   `<div style="background:#f5f3ef;border-radius:18px;padding:18px">
+      <div style="font-size:11px;color:#77736d">${esc(x.project)} · ${esc(x.priority)}</div>
+      <div style="font-size:19px;font-weight:800;line-height:1.25;margin-top:8px">${esc(x.action)}</div>
+      <div class="sub" style="margin-top:8px">${esc(x.objective)}</div>
+      <div class="actions" style="margin-top:16px">
+        <button class="primary" onclick="completeFocus(${x.id})">✓ C’est fait</button>
+        <button class="secondary" onclick="closeFocus()">Plus tard</button>
+      </div>
+    </div>`;
+ }
+ document.getElementById("focusModal").classList.add("open");
+}
+function completeFocus(id){
+ complete(id);
+ closeFocus();
+}
+function closeFocus(){document.getElementById("focusModal").classList.remove("open")}
+
+function openModal(){document.getElementById("modal").classList.add("open")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+function saveAction(e){
+ e.preventDefault();
+ items.push({id:Date.now(),project:project.value.trim(),objective:objective.value.trim(),action:action.value.trim(),priority:priority.value,status:status.value,due:due.value,amount:Number(amount.value)||0,notes:notes.value.trim()});
+ save();e.target.reset();closeModal();render();
+}
+render();
+</script>
+</body>
+</html>
